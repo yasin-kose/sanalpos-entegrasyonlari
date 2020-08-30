@@ -1,7 +1,7 @@
 {
     "name": "ankapix/sanalpos-entegrasyonlari",
     "license": "MIT",
-    "description": "Payu, Paytrek, Paytr, Paynet, Payfor, Moka, Iyzico, İpara, Kuveytturk(Norm, Est), İş bank(İnnova, Est), Garanti(Norm, Est), Akbank, Finans, Hsbc, Halkbank, Anadolubank, Denizbank, Teb, Citibank, Ing, Vakıf, Albarakaturk, Yapıkredi, Ziraat, T. Finans  için Sanal Pos sınıfları.",
+    "description": "Payu, Paytrek,  Paytr, Paynet, Payfor, Moka, Iyzico, İpara, Kuveytturk(Norm, Est), İş bank(İnnova, Est), Garanti(Norm, Est), Akbank, Finans, Hsbc, Halkbank, Anadolubank, Denizbank, Teb, Citibank, Ing, Vakıf, Albarakaturk, Yapıkredi, Ziraat, T. Finans  için Sanal Pos sınıfları.",
     "keywords": ["sanalpos", "online pos", "est", "akbank", "finansbank", "iş bank", " halk bank", "vakıf bank", "yapı kredi", "anadolu bank", "paynet"],
     "authors": [
         {
