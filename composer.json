@@ -1,13 +1,13 @@
 {
     "name": "ankapix/sanalpos-entegrasyonlari",
     "license": "MIT",
-    "description": "Payu, Paytrek,  Paytr, Paynet, Payfor, Moka, Iyzico, İpara, Kuveytturk(Norm, Est), İş bank(İnnova, Est), Garanti(Norm, Est), Akbank, Finans, Hsbc, Halkbank, Anadolubank, Denizbank, Teb, Citibank, Ing, Vakıf, Albarakaturk, Yapıkredi, Ziraat, T. Finans  için Sanal Pos sınıfları.",
+    "description": "Payu, Paytrek, Paytr, Paynet, Payfor, Moka, Iyzico, İpara, Kuveytturk(Norm, Est), İş bank(İnnova, Est), Garanti(Norm, Est), Akbank, Finans, Hsbc, Halkbank, Anadolubank, Denizbank, Teb, Ing, Vakıf, Albarakaturk, Yapıkredi, Ziraat, T. Finans",
     "keywords": ["sanalpos", "online pos", "est", "akbank", "finansbank", "iş bank", " halk bank", "vakıf bank", "yapı kredi", "anadolu bank", "paynet"],
     "authors": [
         {
             "name": "Yasin Köse",
-            "email": "yasin.kose@outlook.com.tr",
-            "homepage": "http://ankapix.com",
+            "email": "bilgi@yasinkose.com.tr",
+            "homepage": "http://www.ankapix.com",
             "role": "Developer"
         }
     ],
@@ -22,7 +22,7 @@
         "symfony/serializer": "^5.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^8.5.8"
     },
     "autoload": {
         "files": [
@@ -31,7 +31,7 @@
             "PaynetClient/PaynetClient.php"
         ],
         "psr-4": {
-            "SanalPos": "src/"
+            "Ankapix\\SanalPos\\": "src/"
         }
     }
 }

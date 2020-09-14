@@ -1,13 +1,13 @@
 <?php
 
-namespace SanalPos\Exceptions;
+namespace Ankapix\SanalPos\Exceptions;
 
 use Exception;
 use Throwable;
 
 /**
  * Class BankNotFoundException
- * @package SanalPos\Exceptions
+ * @package Ankapix\SanalPos\Exceptions
  */
 class BankNotFoundException extends Exception
 {

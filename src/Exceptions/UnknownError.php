@@ -6,19 +6,19 @@ use Exception;
 use Throwable;
 
 /**
- * Class BankClassNullException
+ * Class UnknownError
  * @package Ankapix\SanalPos\Exceptions
  */
-class BankClassNullException extends Exception
+class UnknownError extends Exception
 {
     /**
-     * BankClassNullException constructor.
+     * UnknownError constructor.
      *
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = 'Class must be specified!', $code = 331, Throwable $previous = null)
+    public function __construct($message = 'Something went wrong.', $code = 334, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

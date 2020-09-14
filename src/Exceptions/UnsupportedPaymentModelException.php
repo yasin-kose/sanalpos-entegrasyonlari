@@ -1,13 +1,13 @@
 <?php
 
-namespace SanalPos\Exceptions;
+namespace Ankapix\SanalPos\Exceptions;
 
 use Exception;
 use Throwable;
 
 /**
  * Class UnsupportedPaymentModelException
- * @package SanalPos\Exceptions
+ * @package Ankapix\SanalPos\Exceptions
  */
 class UnsupportedPaymentModelException extends Exception
 {
@@ -18,7 +18,7 @@ class UnsupportedPaymentModelException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = 'Unsupported payment model!', $code = 333, Throwable $previous = null)
+    public function __construct($message = 'Unsupported payment model!', $code = 332, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
