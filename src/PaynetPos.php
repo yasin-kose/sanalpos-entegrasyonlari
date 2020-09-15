@@ -197,7 +197,7 @@ class PaynetPos implements PosInterface
         $paymentParams->add_commission 	= $this->account->is_commission?true:false;
 
         if($this->account->ratio_code){
-            $paymentParams->ratio_code 	= (string) $this->account->installment_code;
+            $paymentParams->ratio_code 	= (string) $this->account->ratio_code;
         }
         if($this->account->agent_id){
             $paymentParams->agent_id 	= (string) $this->account->agent_id;
@@ -207,7 +207,7 @@ class PaynetPos implements PosInterface
         $result 			= $paynet->PaymentPost($paymentParams);
         $XactId 			= $result->xact_id;
         $this->data         = $result;
-        if($result->is_succeed == true and filter_var($this->order->email, FILTER_VALIDATE_EMAIL) and $this->order->is_slip_post==true){
+        if($result->is_succeed == true and filter_var($this->order->email, FILTER_VALIDATE_EMAIL) and $this->account->is_slip_post==true){
             $SlipParams 				= new \SlipParameters();
             $SlipParams->xact_id 	 	= (string) $XactId;
             $SlipParams->email 			= (string) $this->order->email;
@@ -235,7 +235,7 @@ class PaynetPos implements PosInterface
         $BankaHata			= $result->bank_error_message;
         $EMail				= $result->email?$result->email:'';
 
-        if($result->is_succeed == true and filter_var($EMail, FILTER_VALIDATE_EMAIL) and $this->order->is_slip_post==true){
+        if($result->is_succeed == true and filter_var($EMail, FILTER_VALIDATE_EMAIL) and $this->account->is_slip_post==true){
             $SlipParams 				= new \SlipParameters();
             $SlipParams->xact_id 	 	= (string) $XactId;
             $SlipParams->email 			= (string) $EMail;
@@ -286,6 +286,7 @@ class PaynetPos implements PosInterface
         $this->response = (object) [
             'id'                => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
             'reference_no'      => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
+            'order_id'          => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
             'response'          => isset($this->data->message) ? $this->printData($this->data->message) : null,
             'transaction_type'  => $this->type,
             'transaction'       => $this->order->transaction,
@@ -341,6 +342,7 @@ class PaynetPos implements PosInterface
         $this->response = (object) [
             'id'                => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
             'reference_no'      => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
+            'order_id'          => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
             'response'          => isset($this->data->message) ? $this->printData($this->data->message) : null,
             'transaction_type'  => $this->type,
             'transaction'       => $this->order->transaction,
@@ -353,15 +355,15 @@ class PaynetPos implements PosInterface
             'xact_id'           => isset($this->data->xact_id) ? $this->printData($this->data->xact_id) : null,
             'comission'         => isset($this->data->comission) ? $this->printData($this->data->comission) : null,
             'xact_date'         => isset($this->data->xact_date) ? $this->printData($this->data->xact_date) : null,
-            'card_holder'       => isset($this->data->card_holder) ? $this->data->card_holder : null,
-            'card_no_masked'    => isset($this->data->card_no_masked) ? $this->data->card_no_masked : null,
-            'card_type'         => isset($this->data->card_type) ? $this->data->card_type : null,
-            'currency'          => isset($this->data->currency) ? $this->data->currency : null,
-            'instalment'        => isset($this->data->card_no_masked) ? $this->data->instalment : null,
-            'agent_id'          => isset($this->data->agent_id) ? $this->data->agent_id : null,
-            'amount'            => isset($this->data->amount) ? $this->data->amount : null,
-            'is_tds'            => isset($this->data->is_tds) ? $this->data->is_tds : null,
-            'md_status'         => isset($this->data->is_tds) ? $this->data->md_status : null,
+            'card_holder'       => isset($this->data->card_holder) ? $this->printData($this->data->card_holder) : null,
+            'card_no_masked'    => isset($this->data->card_no_masked) ? $this->printData($this->data->card_no_masked) : null,
+            'card_type'         => isset($this->data->card_type) ? $this->printData($this->data->card_type) : null,
+            'currency'          => isset($this->data->currency) ? $this->printData($this->data->currency) : null,
+            'instalment'        => isset($this->data->card_no_masked) ? $this->printData($this->data->instalment) : null,
+            'agent_id'          => isset($this->data->agent_id) ? $this->printData($this->data->agent_id) : null,
+            'amount'            => isset($this->data->amount) ? $this->printData($this->data->amount) : null,
+            'is_tds'            => isset($this->data->is_tds) ? $this->printData($this->data->is_tds) : null,
+            'md_status'         => isset($this->data->is_tds) ? $this->printData($this->data->md_status) : null,
             'all'               => $this->data,
             'original'          => $this->data
         ];
@@ -394,7 +396,7 @@ class PaynetPos implements PosInterface
         $paymentParams->add_commission 	= $this->account->is_commission?true:false;
 
         if($this->account->ratio_code){
-            $paymentParams->ratio_code 	= (string) $this->account->installment_code;
+            $paymentParams->ratio_code 	= (string) $this->account->ratio_code;
         }
         if($this->account->agent_id){
             $paymentParams->agent_id 	= (string) $this->account->agent_id;
@@ -495,63 +497,6 @@ class PaynetPos implements PosInterface
     }
 
     /**
-     * Refund or Cancel Order
-     *
-     * @param array $meta
-     * @param $type
-     * @return $this
-     * @throws GuzzleException
-     */
-    protected function refundOrCancel(array $meta, $type)
-    {
-        $this->order = (object) [
-            'id'        => $meta['order_id'],
-            'amount'    => isset($meta['amount']) ? $meta['amount'] : null,
-            'ip'        => isset($meta['ip']) ? $meta['ip'] : null,
-        ];
-
-        $nodes = [
-            'VposRequest'   => [
-                'MerchantId'            => $this->account->merchant_id,
-                'Password'              => $this->account->password,
-                'TransactionType'       => $type,
-                'ReferenceTransactionId'=> $this->order->id,
-                'CurrencyAmount'        => $this->amountFormat($this->order->amount),
-                'ClientIp'              => isset($this->order->ip) ?$this->order->ip:$this->getIpAdress()
-            ]
-        ];
-
-        $xml = $this->createXML($nodes);
-        $this->send($xml);
-
-        $status = 'declined';
-        if ($this->getProcReturnCode() == '0000') {
-            $status = 'approved';
-        }
-
-        $this->response = (object) [
-            'id'                => isset($this->data->VposResponse->AuthCode) ? $this->printData($this->data->VposResponse->AuthCode) : null,
-            'response'          => isset($this->data->VposResponse->ResultDetail) ? $this->printData($this->data->VposResponse->ResultDetail) : null,
-            'transaction_type'  => $this->type,
-            'transaction'       => $this->order->transaction,
-            'proc_return_code'  => $this->getProcReturnCode(),
-            'code'              => $this->getProcReturnCode(),
-            'status'            => $status,
-            'status_detail'     => $this->getStatusDetail(),
-            'error_code'        => isset($this->data->VposResponse->ResultCode) ? $this->printData($this->data->VposResponse->ResultCode) : null,
-            'error_message'     => isset($this->data->VposResponse->ResultDetail) ? $this->printData($this->data->VposResponse->ResultDetail) : null,
-            'host_date'         => isset($this->data->VposResponse->HostDate) ? $this->printData($this->data->VposResponse->HostDate) : null,
-            'rnd'               => isset($this->data->VposResponse->Rrn) ? $this->printData($this->data->VposResponse->Rrn) : null,
-            'auth_code'         => isset($this->data->VposResponse->AuthCode) ? $this->printData($this->data->VposResponse->AuthCode) : null,
-            'extra'             => isset($this->data->VposResponse->Extra) ? $this->data->VposResponse->Extra : null,
-            'all'               => $this->data,
-            'original'          => $this->data
-        ];
-
-        return $this;
-    }
-
-    /**
     * Refund Order
     *
     * @param $meta
@@ -560,7 +505,33 @@ class PaynetPos implements PosInterface
     */
     public function refund(array $meta)
     {
-        return $this->refundOrCancel($meta, 'Refund');
+        $IsLive     = $this->mode=='TEST'?false:true;
+        $paynet     = new \PaynetClient($this->account->secret_key, $IsLive);
+        
+        $reversedParams 				    = new \ReversedRequestParameters();
+        $reversedParams->xact_id	        = (string) $meta['xact_id'];
+        $reversedParams->amount 	        = (string) $this->amountFormat(isset($meta['amount']) ? $meta['amount'] : 0);
+        $reversedParams->succeedUrl 	    = (string) isset($meta['succeedUrl']) ? $meta['succeedUrl'] : null;
+
+        $result 			= $paynet->ReversedRequest($reversedParams);
+        $this->data         = $result;
+
+        $status = 'declined';
+        if ($this->getProcReturnCode() == '0') {
+            $status = 'approved';
+        }
+
+        $this->response = (object) [
+            'id'                => $meta['xact_id'],
+            'code'              => $this->getProcReturnCode(),
+            'error_code'        => isset($this->data->code) ? $this->printData($this->data->code) : null,
+            'error_message'     => isset($this->data->message) ? $this->printData($this->data->message) : null,
+            'status'            => $status,
+            'status_detail'     => $this->getStatusDetail(),
+            'all'               => $this->data,
+        ];
+
+        return $this;
     }
 
     /**
@@ -572,7 +543,45 @@ class PaynetPos implements PosInterface
     */
     public function cancel(array $meta)
     {
-        return $this->refundOrCancel($meta, 'Cancel');
+        $IsLive     = $this->mode=='TEST'?false:true;
+        $paynet     = new \PaynetClient($this->account->secret_key, $IsLive);
+        
+        $captureParams 				    = new \CaptureRequestParameters();
+        $captureParams->xact_id	        = (string) $meta['xact_id'];
+
+        $result 			= $paynet->CaptureRequest($captureParams);
+        $this->data         = $result;
+
+        $status = 'declined';
+        if ($this->data->is_succeed == true) {
+            $status = 'approved';
+        }
+
+        $this->response = (object) [
+        'xact_id'           => isset($this->data->xact_id) ? $this->printData($this->data->xact_id) : null,
+        'xact_date'         => isset($this->data->xact_date) ? $this->printData($this->data->xact_date) : null,
+        'reference_no'      => isset($this->data->reference_no) ? $this->printData($this->data->reference_no) : null,
+        'response'          => isset($this->data->message) ? $this->printData($this->data->message) : null,
+        'transaction_type'  => isset($this->data->transaction_type) ? $this->printData($this->data->transaction_type) : null,
+        'proc_return_code'  => $this->getProcReturnCode(),
+        'code'              => $this->getProcReturnCode(),
+        'status'            => $status,
+        'status_detail'     => $this->getStatusDetail(),
+        'error_code'        => isset($this->data->paynet_error_id) ? $this->printData($this->data->paynet_error_id) : null,
+        'error_message'     => isset($this->data->paynet_error_message) ? $this->printData($this->data->paynet_error_message) : null,
+        'comission'         => isset($this->data->comission) ? $this->printData($this->data->comission) : null,
+        'card_holder'       => isset($this->data->card_holder) ? $this->printData($this->data->card_holder) : null,
+        'card_no_masked'    => isset($this->data->card_no_masked) ? $this->printData($this->data->card_no_masked) : null,
+        'currency'          => isset($this->data->currency) ? $this->printData($this->data->currency) : null,
+        'instalment'        => isset($this->data->card_no_masked) ? $this->printData($this->data->instalment) : null,
+        'agent_id'          => isset($this->data->agent_id) ? $this->printData($this->data->agent_id) : null,
+        'amount'            => isset($this->data->amount) ? $this->printData($this->data->amount) : null,
+        'is_tds'            => isset($this->data->is_tds) ? $this->printData($this->data->is_tds) : null,
+        'all'               => $this->data,
+        'original'          => $this->data
+        ];
+
+        return $this;
     }
 
     /**
@@ -596,6 +605,17 @@ class PaynetPos implements PosInterface
     }
 
     /**
+    * Send contents to WebService
+    *
+    * @param $contents
+    * @return $this
+    * @throws GuzzleException
+    */
+    public function send($contents)
+    {
+    }
+
+    /**
     * Order History
     *
     * @param array $meta
@@ -604,6 +624,92 @@ class PaynetPos implements PosInterface
     */
     public function history(array $meta)
     {
+        $IsLive     = $this->mode=='TEST'?false:true;
+        $paynet     = new \PaynetClient($this->account->secret_key, $IsLive);
+        
+        $Params 			= new \TransactionListParameters();
+        if($this->account->agent_id){
+            $Params->agent_id	= (string) $this->account->agent_id;
+        }
+        if($meta['datab']){
+            $Params->datab	        = (string) $meta['datab'];
+        }
+        if($meta['datbi']){
+            $Params->datbi	        = (string) $meta['datbi'];
+        }
+        if($meta['show_unsucceed']){
+            $Params->show_unsucceed	= (bool) $meta['show_unsucceed'];
+        }
+        if($meta['untransferred']){
+            $Params->show_unsucceed	= (bool) $meta['untransferred'];
+        }
+        if($meta['limit']){
+            $Params->limit	        = (int) $meta['limit'];
+        }
+        if($meta['ending_before']){
+            $Params->ending_before	= (int) $meta['ending_before'];
+        }
+        if($meta['starting_after']){
+            $Params->starting_after	= (int) $meta['starting_after'];
+        }
+
+        $result 			= $paynet->ListTransaction($Params);
+        $this->data         = $result;
+
+        $status = 'declined';
+        if ($this->data->is_succeed == true) {
+            $status = 'approved';
+        }
+
+        $this->response = (object) [
+        'company_code'      => isset($this->data->companyCode) ? $this->printData($this->data->companyCode) : null,
+        'company_name'      => isset($this->data->companyName) ? $this->printData($this->data->companyName) : null,
+        'total'             => isset($this->data->total) ? $this->printData($this->data->total) : null,
+        'total_count'       => isset($this->data->total_count) ? $this->printData($this->data->total_count) : null,
+        'total_amount'      => isset($this->data->total_amount) ? $this->printData($this->data->total_amount) : null,
+        'limit'             => isset($this->data->limit) ? $this->printData($this->data->limit) : null,
+        'ending_before'     => isset($this->data->ending_before) ? $this->printData($this->data->ending_before) : null,
+        'starting_after'    => isset($this->data->starting_after) ? $this->printData($this->data->starting_after) : null,
+        'has_more'          => isset($this->data->has_more) ? $this->printData($this->data->has_more) : null,
+        'data'              => $this->data->Data
+        ];
+
+        return $this;
+    }
+
+    /**
+    * Installment List
+    *
+    * @param array $meta
+    * @return $this
+    * @throws GuzzleException
+    */
+    public function getInstallmentList(array $meta)
+    {
+        $IsLive     = $this->mode=='TEST'?false:true;
+        $paynet     = new \PaynetClient($this->account->secret_key, $IsLive);
+        
+        if(!$this->account->is_installment){
+            return [];
+        }
+        $ratioParams 				= new \RatioParameters();
+        $ratioParams->bin 	        = $meta['number'];
+        $ratioParams->amount 	    = (string) $this->amountFormat(isset($meta['amount']) ? $meta['amount'] : 0);;
+        if($this->account->agent_id){
+            $ratioParams->agent_id  = $this->account->agent_id;
+        }
+        if($this->account->ratio_code){
+            $ratioParams->ratio_code = $this->account->ratio_code;
+        }
+        $ratioParams->addcomission_to_amount 	= $this->account->is_commission?:false;
+
+        $result          = $paynet->GetRatios($ratioParams);
+			
+        $this->response = (object) [
+            'data'      => isset($result->data) ? $this->printData($result->data) : null
+        ];
+
+        return $this;
     }
 
     /**

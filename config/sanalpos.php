@@ -218,7 +218,7 @@ return [
                 'gateway'       => [
                     'production'    => 'https://3dsecure.vakifbank.com.tr:4443/MPIAPI/MPI_Enrollment.aspx',
                     'test'          => 'https://3dsecuretest.vakifbank.com.tr:4443/MPIAPI/MPI_Enrollment.aspx'
-                ],
+                ]
             ]
         ],
         'paynet' => [
@@ -238,16 +238,16 @@ return [
             'class' =>  Ankapix\SanalPos\Moka::class,
             'urls'  => [
                 'production'    => 'https://service.moka.com/PaymentDealer/DoDirectPaymentThreeD',
-                'test'          => 'https://service.testmoka.com/PaymentDealer/DoDirectPaymentThreeD'
+                'test'          => 'https://service.testmoka.com/PaymentDealer/DoDirectPaymentThreeD',
+                'gateway'       => [
+                    'production'    => 'https://3dsecure.vakifbank.com.tr:4443/MPIAPI/MPI_Enrollment.aspx',
+                    'test'          => 'https://3dsecuretest.vakifbank.com.tr:4443/MPIAPI/MPI_Enrollment.aspx'
+                ]
             ]
         ],
         'payfor' => [
             'name'  => 'Payfor',
             'class' =>  Ankapix\SanalPos\Payfor::class
-        ],
-        'paynet' => [
-            'name'  => 'Paynet',
-            'class' =>  Ankapix\SanalPos\Paynet::class
         ],
         'paytr' => [
             'name'  => 'PayTr',

@@ -124,6 +124,14 @@ interface PosInterface
      * @throws GuzzleException
      */
     public function history(array $meta);
+    /**
+    * GET Installment List
+    *
+    * @param array $meta
+    * @return $this
+    * @throws GuzzleException
+    */
+    public function getInstallmentList(array $meta);
 
     /**
      * Is success

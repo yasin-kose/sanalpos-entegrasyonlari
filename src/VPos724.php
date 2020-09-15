@@ -770,6 +770,15 @@ class VPos724 implements PosInterface
     }
 
     /**
+    * Installment List
+    *
+    * @return $this
+    */
+    public function getInstallmentList(array $meta)
+    {
+    }
+
+    /**
     * Order Status
     *
     * @param array $meta

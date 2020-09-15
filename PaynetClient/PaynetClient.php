@@ -194,6 +194,19 @@ class PaynetClient
 	}
 	
 	/**
+	* 
+	* @param CaptureRequestParameters $params
+	* @return CaptureRequestResponse
+	*/
+	public function CaptureRequest(CaptureRequestParameters $params)
+	{
+		$this->json_result = $this->LoadJson("v1/transaction/capture_reversal", $params);
+		$sonuc = new CaptureRequestResponse();
+		$sonuc->fillFromJson($this->json_result);
+		return $sonuc;
+	}
+	
+	/**
 	 * 
 	 * @param AutologinParameters $params
 	 * @return AutologinResult
@@ -810,7 +823,15 @@ class ReversedRequestParameters
 	public $amount;
 	public $succeedUrl;
 }
-
+/**
+* CaptureRequest() için parametreler
+* @author agitk
+*
+*/
+class CaptureRequestParameters
+{
+	public $xact_id;
+}
 /**
  * ReversedRequest() metodundan dönecek nesne, bu nesne Result ile aynı içerikli olduğu için (şimdilik) ekleme yapmaya gerek yok
  * @author proje
@@ -820,6 +841,46 @@ class ReversedRequestResponse extends Result
 {
 }
 
+/**
+* CaptureRequest() metodundan dönecek nesne
+* @author proje
+*
+*/
+class CaptureRequestResponse extends Result
+{
+	public $xact_id;
+	public $xact_date;
+	public $transaction_type;
+	public $pos_type;
+	public $is_tds;
+	public $agent_id;
+	public $user_id;
+	public $email;
+	public $phone;
+	public $bank_id;
+	public $instalment;
+	public $card_no_masked;
+	public $card_holder;
+	public $amount;
+	public $net_amount;
+	public $comission;
+	public $comission_tax;
+	public $currency;
+	public $authorization_code;
+	public $reference_code;
+	public $order_id;
+	public $is_succeed;
+	public $paynet_error_id;
+	public $paynet_error_message;
+	public $bank_error_id;
+	public $bank_error_message;
+	public $bank_error_short_desc;
+	public $bank_error_long_desc;
+	public $agent_reference_no;
+	public $ratio;
+	public $code;
+	public $message;
+}
 /**
  * Autologin() metodunun parametresi
  * @author proje
